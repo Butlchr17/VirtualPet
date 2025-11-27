@@ -17,7 +17,7 @@ def load_upscaled_photo(relative_path, scale=2):
         img = Image.open(path)
         if scale > 1:
             new_size = (img.width * scale, img.height * scale)
-            img = img.resize(new_size, Image.NEAREST)
+            img = img.resize(new_size, Image.BICUBIC)   # Use NEAREST for crisp pixel art
         return ImageTk.PhotoImage(img)
     except Exception as e:
         print(f"Error loading image {path}: {e}")
