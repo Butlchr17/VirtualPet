@@ -64,21 +64,37 @@ For perfect shaped transparency, change all bg="magenta" to bg="black" and make 
 ## File Structure
 
 virtual-pet/
+
 ├── virtual_pet.py
+
 ├── make_icon.py            # <- in case you wanted to create a desktop shortcut
+
 ├── pet_egg.ico
+
 ├── images/                 # <- put your 64×64 pixel art here
+
 │   ├── pet_idle.png
+
 │   ├── pet_happy.png
+
 │   ├── pet_sad.png
+
 │   ├── pet_depressed.png
+
 │   ├── pet_dead.png (optional)
+
 │   ├── pet_egg.png
+
 │   ├── thought_hungry.png
+
 │   ├── thought_starved.png (optional)
+
 │   ├── thought_dirty.png
+
 │   └── thought_disgusting.png (optional)
+
 └── pet_state.json          # auto-created save file
+
 
 All images are automatically upscaled ×2 (128×128) with bicubic interpolation, but you can optionally use nearest-neighbor for crisp pixel art.
 
