@@ -31,7 +31,7 @@ On Linux:
 ## How to Run
 
 ```
-git clone https://github.com/yourusername/virtual-pet.git
+git clone https://github.com/Butlchr17/virtual-pet.git
 cd virtual-pet
 python virtual_pet.py
 ```
