@@ -21,20 +21,20 @@ Fully written in Python with Tkinter + Pillow. Works perfectly on Windows, Linux
 ## Requirements (to run from source)
 
 - Python 3.8+
-- Pillow → '''pip install pillow'''
+- Pillow → ```bash pip install pillow```
 
 On Linux:
-'''sudo apt install python3-tk python3-pil.imagetk   # Ubuntu/Debian'''
+```bash sudo apt install python3-tk python3-pil.imagetk   # Ubuntu/Debian```
 # or
-'''sudo dnf install python3-tkinter python3-pillow-tk  # Fedora'''
+```bash sudo dnf install python3-tkinter python3-pillow-tk  # Fedora```
 
 ## How to Run
 
-'''
+```bash
 git clone https://github.com/yourusername/virtual-pet.git
 cd virtual-pet
 python virtual_pet.py
-'''
+```
 
 Your pet will appear in the bottom-right corner. Drag it anywhere you like!
 
@@ -42,24 +42,24 @@ Your pet will appear in the bottom-right corner. Drag it anywhere you like!
 
 ### Windows → .exe
 
-'''
+```bash
 pip install pyinstaller
 pyinstaller --onefile --windowed --noconsole ^
     --add-data "images;images" ^
     --icon=images/pet_egg.ico ^
     --name "DesktopPet" ^
     virtual_pet.py
-'''
+```
 
 ### Linux → single binary
 
-'''
+```bash
 pip install pyinstaller
 pyinstaller --onefile --windowed \
     --add-data "images:images" \
     --name "DesktopPet" \
     virtual_pet.py
-'''
+```
 
 Executable will be in dist/
 
