@@ -1,0 +1,51 @@
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+.venv*/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+*.swp
+*.swo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+._*
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Application-specific runtime/generated files
+pet_state.json
+
+# Generated icon (regenerate with make_icon.py when needed)
+pet_egg.ico
+
+# Optional local files
+config.local.py
+debug.log
+*.log
+
+# Test / coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
