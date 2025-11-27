@@ -90,5 +90,5 @@ Just replace the PNGs in the images/ folder with your own 64×64 pixel art (keep
 
 MIT License — do whatever you want with it.
 
----
+___
 Enjoy your eternal desktop companion!
