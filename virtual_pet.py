@@ -329,7 +329,7 @@ def animate_movement():
 
     root.after(3200, animate_movement)
 
-# Dragging (duplicate definition removed, keep only one)
+# Dragging
 canvas.bind("<Button-1>", start_drag)
 canvas.bind("<B1-Motion>", drag)
 button_frame.bind("<Button-1>", start_drag)
