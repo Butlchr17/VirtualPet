@@ -115,15 +115,23 @@ class Pet:
 
 # Main window
 root = tk.Tk()
-root.title("Virtual Pet")
-root.overrideredirect(True)  # No title bar
-root.attributes("-topmost", True)
-root.attributes("-alpha", 0.94)
+root.title("")
+root.overrideredirect(False)  # No title bar with True, But this seems to break keyboard focus on linux for some reason
 
 # Transparent background
 if platform.system() == "Windows":
     root.attributes("-transparentcolor", "magenta")
 root.configure(bg="magenta")
+
+root.attributes("-topmost", True)
+root.attributes("-alpha", 0.94)
+
+if platform.system() == "Linux":
+    # This removes title bar/borders on GNOME/KDE/Wayland/WSLg while keeping focus capability
+    root.wm_attributes("-type", "dock")
+else:
+    # Windows & macOS → real shaped transparent window
+    root.overrideredirect(True)
 
 # Icon
 icon_path = resource_path("images/pet_egg.png")
@@ -296,6 +304,14 @@ def finish_hatching():
 
 # Allow the user to name their new pet when it hatches
 def ask_name():
+    # Temporarily give the window a normal title bar so user can recieve keyboard focus
+    was_overriden = root.wm_overrideredirect() # check current state
+    if was_overriden:
+        root.overrideredirect(False)
+        root.title("")  # blank title to avoid showing old title
+        root.update_idletasks()  # ensure geometry is updated
+        root.lift()  # bring to front
+
     # Dim the UI slightly
     root.attributes("-alpha", 0.85)
 
@@ -314,7 +330,21 @@ def ask_name():
                      insertbackground="#000")
     entry.pack(pady=12)
     entry.insert(0, pet.name)
-    entry.focus_set()
+
+    root.update_idletasks() # ensure geometry is updated
+    panel.update_idletasks()    # ensure geometry is updated
+
+    entry.focus_force() # focus on entry
+    entry.selection_range(0, tk.END)    # select all text
+    entry.icursor(tk.END)   # move cursor to end
+
+    root.after(50, entry.focus_force)  # ensure focus
+
+    # macOS-specific: force the Python process to become frontmost app
+    if platform.system() == "Darwin":
+        pid = os.getpid()
+        # This one-liner works on script, pyinstaller .app, and .exe on macOS
+        os.system('/usr/bin/osascript -e \'tell application "System Events" to set frontmost of (first process whose unix id is %d) to true\'' % pid)
 
     # Confirm button function
     def save_name():
@@ -324,6 +354,8 @@ def ask_name():
         pet.save_state()
         panel.destroy()
         root.attributes("-alpha", 0.94)  # restore brightness
+        if was_overriden:
+            root.overrideredirect(True)  # restore no title bar
 
     # Confirm button
     tk.Button(panel, text="Confirm", font=("Arial", 14, "bold"),
@@ -333,6 +365,9 @@ def ask_name():
     # Shortcut keys
     entry.bind("<Return>", lambda e: save_name())
     entry.bind("<Escape>", lambda e: save_name())
+
+    # Close panel on clicking outside
+    panel.bind("<Button-1>", lambda e: None)  # prevent propagation
 
 def update_name_display():
     if pet and pet.state != "dead":
