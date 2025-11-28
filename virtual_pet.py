@@ -29,6 +29,7 @@ class Pet:
         self.happiness = 50
         self.cleanliness = 50
         self.health = 100
+        self.name = "Zorn"
         self.state = 'idle'
         self.load_state()
         self.set_mood()
@@ -90,7 +91,8 @@ class Pet:
             'hunger': self.hunger,
             'happiness': self.happiness,
             'cleanliness': self.cleanliness,
-            'health': self.health
+            'health': self.health,
+            'name': self.name,
         }
         try:
             with open('pet_state.json', 'w') as f:
@@ -107,6 +109,7 @@ class Pet:
                     self.happiness = data.get('happiness', 50)
                     self.cleanliness = data.get('cleanliness', 50)
                     self.health = data.get('health', 100)
+                    self.name = data.get('name', "Zorn")
             except:
                 pass
 
@@ -136,9 +139,9 @@ root.geometry(f"{window_width}x{window_height}+{screen_width - window_width - 50
 
 # Canvas for pet
 canvas = tk.Canvas(root, width=256, height=340, bg="magenta", highlightthickness=0)
-canvas.pack(fill="both", expand=True, padx=10, pady=(50, 10))
+canvas.pack(fill="both", expand=True, padx=10, pady=(0, 20))
 
-pet_item = canvas.create_image(128, 240, anchor="center")
+pet_item = canvas.create_image(128, 260, anchor="center")
 hunger_bubble_item = canvas.create_image(80, 100, anchor="center", state="hidden")
 clean_bubble_item = canvas.create_image(176, 100, anchor="center", state="hidden")
 
@@ -146,12 +149,25 @@ clean_bubble_item = canvas.create_image(176, 100, anchor="center", state="hidden
 button_frame = tk.Frame(root, bg="magenta")
 button_frame.pack(side="bottom", fill="x", pady=(0,15))
 
+# Action buttons
 tk.Button(button_frame, text="Feed", command=lambda: perform_action(pet.feed), bg="#ff9999", relief="flat", font=("Arial", 10)).pack(side="left", padx=15)
 tk.Button(button_frame, text="Play", command=lambda: perform_action(pet.play), bg="#99ff99", relief="flat", font=("Arial", 10)).pack(side="left", padx=15)
 tk.Button(button_frame, text="Clean", command=lambda: perform_action(pet.clean), bg="#99ccff", relief="flat", font=("Arial", 10)).pack(side="left", padx=15)
 
-close_btn = tk.Button(root, text="X", command=root.quit, bg='red', fg='white', relief="flat", font=("Arial", 11, "bold"))
-close_btn.place(relx=1.0, rely=0.0, anchor='ne')
+# Top UI bar and name display
+top_bar = tk.Frame(root, bg="#333333", height=46)
+top_bar.place(x=0, y=0, relwidth=1)
+top_bar.pack_propagate(False) # prevent resizing
+
+# Close button
+close_btn = tk.Button(root, text="✕", command=root.quit, bg='#e81123', fg='white', relief="flat", font=("Arial", 16, "bold"))
+close_btn.place(relx=0.98, rely=0.0075, anchor='ne')
+
+# Name display
+name_frame = tk.Frame(top_bar, bg="#ffd700", highlightbackground="#000000", highlightthickness=3, padx=22, pady=8, relief="raised")
+name_frame.place(relx=0.5, rely=0.5, anchor="center")
+name_label = tk.Label(name_frame, text="", font=("Arial", 18, "bold"), bg="#ffd700", fg="#000000", highlightthickness=0)
+name_label.pack()
 
 # Dragging
 drag_x = drag_y = 0
@@ -271,11 +287,74 @@ def finish_hatching():
     global pet
     pet = Pet()
     update_pet_image()
-    root.hatch_btn.destroy()
+    ask_name()  # Blocks until name is chosen
+    root.hatch_btn.destroy()    # destroy hatch button after name is set
     button_frame.pack()
     game_loop()
     animate_movement()
+    update_name_display()
 
+# Allow the user to name their new pet when it hatches
+def ask_name():
+    # Dim the UI slightly
+    root.attributes("-alpha", 0.85)
+
+    # Create a centered panel inside the main window
+    panel = tk.Frame(root, bg="#ffd700", bd=4, relief="raised")
+    panel.place(relx=0.5, rely=0.5, anchor="center")
+
+    # Title
+    tk.Label(panel, text="♡ Name your pet ♡", font=("Arial", 18, "bold"),
+             bg="#ffd700", fg="#000").pack(pady=(20, 10))
+
+    # Entry field
+    entry = tk.Entry(panel, font=("Arial", 20, "bold"), justify="center",
+                     width=16, relief="flat", bg="white", fg="#000",
+                     highlightthickness=2, highlightbackground="#ff3399",
+                     insertbackground="#000")
+    entry.pack(pady=12)
+    entry.insert(0, pet.name)
+    entry.focus_set()
+
+    # Confirm button function
+    def save_name():
+        new_name = entry.get().strip()
+        pet.name = new_name if new_name else "Zorn"
+        update_name_display()
+        pet.save_state()
+        panel.destroy()
+        root.attributes("-alpha", 0.94)  # restore brightness
+
+    # Confirm button
+    tk.Button(panel, text="Confirm", font=("Arial", 14, "bold"),
+              bg="#ff3399", fg="white", relief="flat",
+              command=save_name, padx=40, pady=10).pack(pady=15)
+
+    # Shortcut keys
+    entry.bind("<Return>", lambda e: save_name())
+    entry.bind("<Escape>", lambda e: save_name())
+
+def update_name_display():
+    if pet and pet.state != "dead":
+        name_label.config(text=pet.name.upper())
+        name_frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        # Golden nameplate when alive
+        name_frame.config(bg="#ffd700", highlightbackground="#000000")
+        
+        # # Optional Mood glow effect on text
+        # if pet.happiness > 90:
+        #     name_label.config(fg="#ff3399")   # hot pink when super happy
+        # elif pet.happiness < 30:
+        #     name_label.config(fg="#aaaaaa")   # sad dim gray
+        # else:
+        #     name_label.config(fg="#000000")   # strong black
+
+    else:
+        name_frame.place_forget()
+        top_bar.config(bg="#222222")  # dark when dead/egg
+
+# Death Check
 def check_death():
     if pet is not None and pet.state == "dead":
         update_pet_image()  # Handles dead image + hides bubbles
@@ -291,6 +370,7 @@ if os.path.exists(save_file):
             json.load(f)
         pet = Pet()
         update_pet_image()
+        update_name_display()
         button_frame.pack(side="bottom", fill="x", pady=(0, 20))
         game_loop()
         animate_movement()
@@ -305,6 +385,7 @@ def game_loop():
     if pet and pet.state != "dead":
         pet.update()
         update_pet_image()
+        update_name_display()
         check_death()
         root.after(6000, game_loop)
 
@@ -329,10 +410,11 @@ def animate_movement():
 
     root.after(3200, animate_movement)
 
-# Dragging (duplicate definition removed, keep only one)
 canvas.bind("<Button-1>", start_drag)
 canvas.bind("<B1-Motion>", drag)
 button_frame.bind("<Button-1>", start_drag)
 button_frame.bind("<B1-Motion>", drag)
+top_bar.bind("<Button-1>", start_drag)
+top_bar.bind("<B1-Motion>", drag)
 
 root.mainloop()
