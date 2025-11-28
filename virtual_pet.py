@@ -343,7 +343,6 @@ def ask_name():
     # macOS-specific: force the Python process to become frontmost app
     if platform.system() == "Darwin":
         pid = os.getpid()
-        # This one-liner works on script, pyinstaller .app, and .exe on macOS
         os.system('/usr/bin/osascript -e \'tell application "System Events" to set frontmost of (first process whose unix id is %d) to true\'' % pid)
 
     # Confirm button function
@@ -383,7 +382,7 @@ def update_name_display():
         # elif pet.happiness < 30:
         #     name_label.config(fg="#aaaaaa")   # sad dim gray
         # else:
-        #     name_label.config(fg="#000000")   # strong black
+        #     name_label.config(fg="#000000")   # black
 
     else:
         name_frame.place_forget()

@@ -33,6 +33,7 @@ On Linux:
 ```
 git clone https://github.com/Butlchr17/virtual-pet.git
 cd virtual-pet
+python make_icon.py
 python virtual_pet.py
 ```
 
