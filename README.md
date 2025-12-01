@@ -22,6 +22,7 @@ Fully written in Python with Tkinter + Pillow. Works perfectly on Windows, Linux
 
 - Python 3.8+
 - Pillow → ```pip install pillow```
+- Tkinter → ```pip install tk```
 
 On Linux:
 ```sudo apt install python3-tk python3-pil.imagetk   # Ubuntu/Debian```
